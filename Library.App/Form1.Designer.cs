@@ -28,12 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            dgvBooks = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
+            SuspendLayout();
+            // 
+            // dgvBooks
+            // 
+            dgvBooks.AccessibleName = "";
+            dgvBooks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvBooks.Dock = DockStyle.Fill;
+            dgvBooks.Location = new Point(0, 0);
+            dgvBooks.Name = "dgvBooks";
+            dgvBooks.RowHeadersWidth = 51;
+            dgvBooks.Size = new Size(1421, 665);
+            dgvBooks.TabIndex = 0;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1421, 665);
+            Controls.Add(dgvBooks);
+            Name = "Form1";
             Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)dgvBooks).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private DataGridView dgvBooks;
     }
 }

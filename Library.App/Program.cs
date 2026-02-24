@@ -1,16 +1,21 @@
+using Library.App.Data;
+
 namespace Library.App
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
+            // vytvorenie databázy a naplnenie testovacími dátami
+            using (var db = new ApplicationDbContext())
+            {
+                db.Database.EnsureCreated();
+                DbSeeder.Seed(db);
+            }
+
             Application.Run(new Form1());
         }
     }

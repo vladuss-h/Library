@@ -12,21 +12,21 @@ namespace Library.App.Data
         {
         }
 
-        public DbSet<Book> Books { get; set; }
+        public DbSet<Book> Books { get; set; }///repezentuje tabuľku kníh v databáze
         public DbSet<Reader> Readers { get; set; }
         public DbSet<Loan> Loans { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlite("Data Source=library.db");
+                optionsBuilder.UseSqlite("Data Source=library.db");///nastavenie pripojenia k SQLite databáze, ak ešte není nakonfigurované
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // unikátne ID knihy 
             modelBuilder.Entity<Book>()
-                .HasIndex(b => b.BookId)
+                .HasIndex(b => b.BookId) ///kontrola duplicity
                 .IsUnique();
 
             // unikátne číslo občianskeho preukazu
