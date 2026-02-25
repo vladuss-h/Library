@@ -39,6 +39,7 @@
             btnDelete = new Button();
             btnEdit = new Button();
             btnSaveEdit = new Button();
+            btnOpenReaders = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
             // 
@@ -135,11 +136,22 @@
             btnSaveEdit.Visible = false;
             btnSaveEdit.Click += btnSaveEdit_Click;
             // 
+            // btnOpenReaders
+            // 
+            btnOpenReaders.Location = new Point(1315, 25);
+            btnOpenReaders.Name = "btnOpenReaders";
+            btnOpenReaders.Size = new Size(94, 29);
+            btnOpenReaders.TabIndex = 10;
+            btnOpenReaders.Text = "Čitatelia";
+            btnOpenReaders.UseVisualStyleBackColor = true;
+            btnOpenReaders.Click += btnOpenReaders_Click_1;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1421, 665);
+            Controls.Add(btnOpenReaders);
             Controls.Add(btnSaveEdit);
             Controls.Add(btnEdit);
             Controls.Add(btnDelete);
@@ -168,5 +180,6 @@
         private Button btnDelete;
         private Button btnEdit;
         private Button btnSaveEdit;
+        private Button btnOpenReaders;
     }
 }

@@ -161,6 +161,11 @@ namespace Library.App
             btnSaveEdit.Visible = true;
         }
 
+        private void btnOpenReaders_Click(object sender, EventArgs e)
+        {
+            var f = new ReadersForm();
+            f.ShowDialog();
+        }
         private void btnSaveEdit_Click(object sender, EventArgs e)
         {
             if (_editingBookId == null)
@@ -203,5 +208,12 @@ namespace Library.App
 
             LoadBooks();
         }
+
+        private void btnOpenReaders_Click_1(object sender, EventArgs e)
+        {
+            var readersForm = new ReadersForm();
+            readersForm.ShowDialog();
+        }
     }
+
 }
