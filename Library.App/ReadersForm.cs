@@ -103,6 +103,21 @@ namespace Library.App
                 var reader = db.Readers.FirstOrDefault(r => r.Id == readerId);
                 if (reader != null)
                 {
+                    bool hasAnyLoans = db.Loans.Any(l => l.ReaderId == reader.Id);
+                    bool hasActiveLoans = db.Loans.Any(l => l.ReaderId == reader.Id && l.ReturnedAt == null);
+
+                    if (hasActiveLoans)
+                    {
+                        MessageBox.Show("Čitateľa nie je možné zmazať, pretože má momentálne požičanú knihu.");
+                        return;
+                    }
+
+                    if (hasAnyLoans)
+                    {
+                        MessageBox.Show("Čitateľa nie je možné zmazať, pretože má históriu výpožičiek.");
+                        return;
+                    }
+
                     db.Readers.Remove(reader);
                     db.SaveChanges();
                 }

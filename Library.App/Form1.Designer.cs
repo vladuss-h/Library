@@ -42,6 +42,7 @@
             btnOpenReaders = new Button();
             btnLoans = new Button();
             btnWhoHasBook = new Button();
+            btnImportExcel = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
             // 
@@ -168,11 +169,22 @@
             btnWhoHasBook.UseVisualStyleBackColor = true;
             btnWhoHasBook.Click += btnWhoHasBook_Click;
             // 
+            // btnImportExcel
+            // 
+            btnImportExcel.Location = new Point(12, 220);
+            btnImportExcel.Name = "btnImportExcel";
+            btnImportExcel.Size = new Size(132, 29);
+            btnImportExcel.TabIndex = 13;
+            btnImportExcel.Text = "Import Excelu";
+            btnImportExcel.UseVisualStyleBackColor = true;
+            btnImportExcel.Click += btnImportExcel_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1421, 665);
+            Controls.Add(btnImportExcel);
             Controls.Add(btnWhoHasBook);
             Controls.Add(btnLoans);
             Controls.Add(btnOpenReaders);
@@ -207,5 +219,6 @@
         private Button btnOpenReaders;
         private Button btnLoans;
         private Button btnWhoHasBook;
+        private Button btnImportExcel;
     }
 }

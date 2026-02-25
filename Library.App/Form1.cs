@@ -1,7 +1,9 @@
+using ClosedXML.Excel;
 using Library.App.Data; //prepojenie knižníc s DB
 using Library.App.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using ClosedXML.Excel;
 
 namespace Library.App
 {
@@ -149,6 +151,21 @@ namespace Library.App
 
                 if (book != null)
                 {
+                    bool hasAnyLoans = db.Loans.Any(l => l.BookId == book.Id);
+                    bool isCurrentlyBorrowed = db.Loans.Any(l => l.BookId == book.Id && l.ReturnedAt == null);
+
+                    if (isCurrentlyBorrowed)
+                    {
+                        MessageBox.Show("Knihu nie je možné zmazať, pretože je momentálne požičaná.");
+                        return;
+                    }
+
+                    if (hasAnyLoans)
+                    {
+                        MessageBox.Show("Knihu nie je možné zmazať, pretože má históriu výpožičiek.");
+                        return;
+                    }
+
                     db.Books.Remove(book);
                     db.SaveChanges();
                 }
@@ -261,5 +278,59 @@ namespace Library.App
             }
         }
 
+        private void btnImportExcel_Click(object sender, EventArgs e)
+        {
+            using var dialog = new OpenFileDialog();
+            dialog.Filter = "Excel súbory (*.xlsx)|*.xlsx";
+            dialog.Title = "Vyber Excel súbor s knihami";
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            int imported = 0;
+            int skipped = 0;
+
+            using (var db = new ApplicationDbContext())
+            using (var wb = new XLWorkbook(dialog.FileName))
+            {
+                var ws = wb.Worksheets.First(); // prvý sheet
+                var rows = ws.RangeUsed().RowsUsed().Skip(1); // preskoč hlavičku
+
+                foreach (var row in rows)
+                {
+                    // A=BookId, B=Title, C=Author
+                    var bookIdText = row.Cell(1).GetString().Trim();
+                    var title = row.Cell(2).GetString().Trim();
+                    var author = row.Cell(3).GetString().Trim();
+
+                    if (!int.TryParse(bookIdText, out int bookId) || string.IsNullOrWhiteSpace(title))
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    // kontrola duplicity BookId
+                    if (db.Books.Any(b => b.BookId == bookId))
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    db.Books.Add(new Book
+                    {
+                        BookId = bookId,
+                        Title = title,
+                        Author = author
+                    });
+
+                    imported++;
+                }
+
+                db.SaveChanges();
+            }
+
+            LoadBooks(); // refresh tabuľky kníh
+            MessageBox.Show($"Import hotový.\nPridané: {imported}\nPreskočené: {skipped}");
+        }
     }
 }
