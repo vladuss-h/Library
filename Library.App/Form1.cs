@@ -1,13 +1,17 @@
 using Library.App.Data; //prepojenie knižníc s DB
+using Library.App.Models;
 using System.Linq;
 
 namespace Library.App
 {
     public partial class Form1 : Form
     {
+        private int? _editingBookId = null;
         public Form1()
         {
             InitializeComponent();
+            dgvBooks.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvBooks.MultiSelect = false;
             LoadBooks();
         }
 
@@ -15,8 +19,189 @@ namespace Library.App
         {
             using (var db = new ApplicationDbContext())
             {
-                dgvBooks.DataSource = db.Books.ToList();
+                dgvBooks.AutoGenerateColumns = true;
+                dgvBooks.DataSource = db.Books.ToList(); // načítanie všetkých kníh z databázy a zobrazenie v DataGridView
             }
+
+            // UI formátovanie tabuľky:
+            // po nastavení DataSource upravujeme viditeľnosť a názvy stĺpcov,
+            // aby boli zrozumiteľné pre používateľa
+            HideIfExists("Id");
+            HideIfExists("CreatedAt");
+
+            SetHeaderIfExists("BookId", "ID");
+            SetHeaderIfExists("Title", "Názov");
+            SetHeaderIfExists("Author", "Autor");
+            SetHeaderIfExists("IsBorrowed", "Požičaná");
+        }
+        private void HideIfExists(string colName)
+        {
+            if (dgvBooks.Columns.Contains(colName))
+                dgvBooks.Columns[colName].Visible = false;
+        }
+
+        private void SetHeaderIfExists(string colName, string header)
+        {
+            if (dgvBooks.Columns.Contains(colName))
+                dgvBooks.Columns[colName].HeaderText = header;
+        }
+
+        private void dgvBooks_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvBooks.SelectedRows.Count == 0) return;
+
+            var row = dgvBooks.SelectedRows[0];
+
+            _editingBookId = (int)row.Cells["BookId"].Value;
+            txtTitle.Text = row.Cells["Title"].Value?.ToString() ?? "";
+            txtAuthor.Text = row.Cells["Author"].Value?.ToString() ?? "";
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAddBook_Click(object sender, EventArgs e)
+        {
+            var title = txtTitle.Text.Trim();
+            var author = txtAuthor.Text.Trim();
+
+            // jednoducha kontrola povinnych poli
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                MessageBox.Show("Zadaj názov knihy");
+                return;
+            }
+
+            using (var db = new ApplicationDbContext())
+            {
+                var nextBookId = 1;
+                if (db.Books.Any())
+                    nextBookId = db.Books.Max(b => b.BookId) + 1;
+
+                // kontrola duplicity
+                if (db.Books.Any(b => b.BookId == nextBookId))
+                {
+                    MessageBox.Show("Duplicita ID knihy");
+                    return;
+                }
+
+                var book = new Book
+                {
+                    BookId = nextBookId,
+                    Title = title,
+                    Author = author,
+                    IsBorrowed = false
+                };
+
+                db.Books.Add(book);
+                db.SaveChanges();
+            }
+
+            // vycistit polia
+            txtTitle.Text = "";
+            txtAuthor.Text = "";
+
+            // refresh grid
+            LoadBooks();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Kontrola, či je vybraný riadok
+            if (dgvBooks.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vyber knihu, ktorú chceš zmazať.");
+                return;
+            }
+
+            // Získame ID vybranej knihy z tabuľky
+            var selectedRow = dgvBooks.SelectedRows[0];
+            int bookId = (int)selectedRow.Cells["BookId"].Value;
+
+            // Potvrdenie od používateľa
+            var confirmResult = MessageBox.Show(
+                "Naozaj chceš zmazať túto knihu?",
+                "Potvrdenie",
+                MessageBoxButtons.YesNo);
+
+            if (confirmResult == DialogResult.No)
+                return;
+
+            // Vymazanie z databázy
+            using (var db = new ApplicationDbContext())
+            {
+                var book = db.Books.FirstOrDefault(b => b.BookId == bookId);
+
+                if (book != null)
+                {
+                    db.Books.Remove(book);
+                    db.SaveChanges();
+                }
+            }
+
+            // Obnovenie tabuľky
+            LoadBooks();
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (_editingBookId == null)
+            {
+                MessageBox.Show("Vyber knihu na úpravu.");
+                return;
+            }
+
+            btnAddBook.Enabled = false;
+            btnSaveEdit.Visible = true;
+        }
+
+        private void btnSaveEdit_Click(object sender, EventArgs e)
+        {
+            if (_editingBookId == null)
+            {
+                MessageBox.Show("Vyber knihu na úpravu.");
+                return;
+            }
+
+            var title = txtTitle.Text.Trim();
+            var author = txtAuthor.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                MessageBox.Show("Názov je povinný.");
+                return;
+            }
+
+            using (var db = new ApplicationDbContext())
+            {
+                var book = db.Books.FirstOrDefault(b => b.BookId == _editingBookId.Value);
+
+                if (book == null)
+                {
+                    MessageBox.Show("Kniha sa nenašla (možno bola zmazaná).");
+                    return;
+                }
+
+                book.Title = title;
+                book.Author = author;
+
+                db.SaveChanges();
+            }
+
+            // reset režimu
+            _editingBookId = null;
+            txtTitle.Text = "";
+            txtAuthor.Text = "";
+            btnAddBook.Enabled = true;
+            btnSaveEdit.Visible = false;
+
+            LoadBooks();
         }
     }
 }
