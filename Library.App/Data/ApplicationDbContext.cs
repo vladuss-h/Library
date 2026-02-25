@@ -13,8 +13,8 @@ namespace Library.App.Data
         }
 
         public DbSet<Book> Books { get; set; }///repezentuje tabuľku kníh v databáze
-        public DbSet<Reader> Readers { get; set; }
-        public DbSet<Loan> Loans { get; set; }
+        public DbSet<Reader> Readers { get; set; }///reprezentuje tabuľku čitateľov v databáze
+        public DbSet<Loan> Loans { get; set; }///reprezentuje tabuľku výpožičiek v databáze
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,27 +24,25 @@ namespace Library.App.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // unikátne ID knihy 
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Book>()
-                .HasIndex(b => b.BookId) ///kontrola duplicity
+                .HasIndex(b => b.BookId)
                 .IsUnique();
 
-            // unikátne číslo občianskeho preukazu
             modelBuilder.Entity<Reader>()
                 .HasIndex(r => r.IdNumber)
                 .IsUnique();
 
-            // vzťah Loan -> Book
             modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Book)
-                .WithMany()
+                .WithMany(b => b.Loans)         
                 .HasForeignKey(l => l.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // vzťah Loan -> Reader
             modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Reader)
-                .WithMany()
+                .WithMany(r => r.Loans)          
                 .HasForeignKey(l => l.ReaderId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

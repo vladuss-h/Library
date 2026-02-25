@@ -32,6 +32,8 @@ namespace Library.App
             // UI
             if (dgvReaders.Columns.Contains("Id")) dgvReaders.Columns["Id"].Visible = false;
             if (dgvReaders.Columns.Contains("CreatedAt")) dgvReaders.Columns["CreatedAt"].Visible = false;
+            if (dgvReaders.Columns.Contains("Loans")) dgvReaders.Columns["Loans"].Visible = false;
+            if (dgvReaders.Columns.Contains("FullName")) dgvReaders.Columns["FullName"].Visible = false;
 
             if (dgvReaders.Columns.Contains("IdNumber")) dgvReaders.Columns["IdNumber"].HeaderText = "Číslo OP";
             if (dgvReaders.Columns.Contains("FirstName")) dgvReaders.Columns["FirstName"].HeaderText = "Meno";

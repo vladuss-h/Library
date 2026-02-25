@@ -40,6 +40,8 @@
             btnEdit = new Button();
             btnSaveEdit = new Button();
             btnOpenReaders = new Button();
+            btnLoans = new Button();
+            btnWhoHasBook = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
             // 
@@ -146,11 +148,33 @@
             btnOpenReaders.UseVisualStyleBackColor = true;
             btnOpenReaders.Click += btnOpenReaders_Click_1;
             // 
+            // btnLoans
+            // 
+            btnLoans.Location = new Point(1206, 25);
+            btnLoans.Name = "btnLoans";
+            btnLoans.Size = new Size(94, 29);
+            btnLoans.TabIndex = 11;
+            btnLoans.Text = "Výpožičky";
+            btnLoans.UseVisualStyleBackColor = true;
+            btnLoans.Click += btnLoans_Click_1;
+            // 
+            // btnWhoHasBook
+            // 
+            btnWhoHasBook.Location = new Point(1206, 68);
+            btnWhoHasBook.Name = "btnWhoHasBook";
+            btnWhoHasBook.Size = new Size(203, 29);
+            btnWhoHasBook.TabIndex = 12;
+            btnWhoHasBook.Text = "Kto má požičanú knihu?";
+            btnWhoHasBook.UseVisualStyleBackColor = true;
+            btnWhoHasBook.Click += btnWhoHasBook_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1421, 665);
+            Controls.Add(btnWhoHasBook);
+            Controls.Add(btnLoans);
             Controls.Add(btnOpenReaders);
             Controls.Add(btnSaveEdit);
             Controls.Add(btnEdit);
@@ -181,5 +205,7 @@
         private Button btnEdit;
         private Button btnSaveEdit;
         private Button btnOpenReaders;
+        private Button btnLoans;
+        private Button btnWhoHasBook;
     }
 }

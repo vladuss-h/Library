@@ -4,6 +4,7 @@ namespace Library.App.Models
 /// Sluzí na spolocne vlastnosti a splnenie poziadavky dedičnosti
     public abstract class BaseEntity 
     {
+        public int Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; /// Datum vytvorenia záznamu
     }
 }

@@ -7,5 +7,8 @@
         public string FirstName { get; set; }  // meno
         public string LastName { get; set; }   // priezvisko
         public DateTime DateOfBirth { get; set; }  // dátum narodenia
+
+        public ICollection<Loan> Loans { get; set; } = new List<Loan>();
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

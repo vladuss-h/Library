@@ -1,5 +1,6 @@
 using Library.App.Data; //prepojenie knižníc s DB
 using Library.App.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Library.App
@@ -20,7 +21,15 @@ namespace Library.App
             using (var db = new ApplicationDbContext())
             {
                 dgvBooks.AutoGenerateColumns = true;
-                dgvBooks.DataSource = db.Books.ToList(); // načítanie všetkých kníh z databázy a zobrazenie v DataGridView
+                dgvBooks.DataSource = db.Books
+    .Select(b => new
+    {
+        b.Id,
+        b.BookId,
+        b.Title,
+        b.Author,
+    })
+    .ToList();
             }
 
             // UI formátovanie tabuľky:
@@ -209,11 +218,48 @@ namespace Library.App
             LoadBooks();
         }
 
+        private void btnLoans_Click(object sender, EventArgs e)
+        {
+            new LoansForm().ShowDialog();
+        }
+
         private void btnOpenReaders_Click_1(object sender, EventArgs e)
         {
             var readersForm = new ReadersForm();
             readersForm.ShowDialog();
         }
-    }
 
+        private void btnLoans_Click_1(object sender, EventArgs e)
+        {
+            new LoansForm().ShowDialog();
+            LoadBooks();
+        }
+
+        private void btnWhoHasBook_Click(object sender, EventArgs e)
+        {
+            if (dgvBooks.CurrentRow == null)
+            {
+                MessageBox.Show("Vyber knihu v tabuľke.");
+                return;
+            }
+
+            int bookDbId = Convert.ToInt32(dgvBooks.CurrentRow.Cells["Id"].Value);
+
+            using (var db = new ApplicationDbContext())
+            {
+                var loan = db.Loans
+                    .Include(l => l.Reader)
+                    .FirstOrDefault(l => l.BookId == bookDbId && l.ReturnedAt == null);
+
+                if (loan == null)
+                {
+                    MessageBox.Show("Kniha nie je požičaná.");
+                    return;
+                }
+
+                MessageBox.Show($"Knihu má požičanú: {loan.Reader.FirstName} {loan.Reader.LastName}");
+            }
+        }
+
+    }
 }
